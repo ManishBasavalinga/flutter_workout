@@ -1,0 +1,68 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_workout/provider/data.dart';
+import 'package:provider/provider.dart';
+
+import 'home_screen.dart';
+
+class LoadingScreen extends StatefulWidget {
+  @override
+  _LoadingScreenState createState() => _LoadingScreenState();
+}
+
+class _LoadingScreenState extends State<LoadingScreen> {
+  @override
+  void didChangeDependencies() {
+    getData();
+    super.didChangeDependencies();
+  }
+
+  void getData() async {
+    await Provider.of<RepsData>(context).setRepsData;
+    Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: <Widget>[
+          Flexible(
+            child: Container(
+              color: Colors.black,
+              child: SpinKitDoubleBounce(
+                color: Colors.white,
+                size: 100.0,
+              ),
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            color: Colors.black,
+            child: Column(
+              children: <Widget>[
+                Text(
+                  'PATIENCE AND PERSISTENCE',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 25,
+                  ),
+                ),
+                SizedBox(
+                  height: 3,
+                ),
+                Text(
+                  'CONQUERS ALL THINGS',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 30.5,
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}

@@ -1,0 +1,36 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_workout/provider/data.dart';
+import 'package:flutter_workout/screens/home_screen.dart';
+import 'package:flutter_workout/screens/loading_screen.dart';
+import 'package:flutter_workout/screens/workout_screen.dart';
+import 'package:provider/provider.dart';
+
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  runApp(App());
+}
+
+class App extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => RepsData(),
+        ),
+      ],
+      child: MaterialApp(
+        home: LoadingScreen(),
+        routes: {
+          HomeScreen.routeName: (context) => HomeScreen(),
+          WorkoutScreen.routeName: (context) => WorkoutScreen(),
+        },
+      ),
+    );
+  }
+}

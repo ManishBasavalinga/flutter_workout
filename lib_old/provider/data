@@ -1,0 +1,500 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_workout/provider/workout.dart';
+import 'package:sqflite/sqflite.dart';
+
+class RepsData with ChangeNotifier {
+  int _reps = -1;
+  Database database;
+
+  Future get setRepsData async {
+    var path = await getDatabasesPath() + '/data.db';
+
+    database = await openDatabase(path, version: 1,
+        onCreate: (Database db, int version) async {
+      await db
+          .execute('CREATE TABLE Data (id INTEGER PRIMARY KEY, name TEXT, value INTEGER)');
+    });
+
+    await database.transaction((txn) async {
+      var newList = await txn.rawQuery('SELECT * FROM Data');
+      if (newList.isEmpty) {
+        await txn.rawInsert(
+          'INSERT INTO Data(name, value) VALUES(?)',
+          [
+            'sets_1'
+            5,
+          ],
+        );
+        await txn.rawInsert(
+          'INSERT INTO Data(name, value) VALUES(?)',
+          [
+            'reps_1'
+            3,
+          ],
+        );
+        await txn.rawInsert(
+          'INSERT INTO Data(name, value) VALUES(?)',
+          [
+            'sets_2'
+            4,
+          ],
+        );
+        await txn.rawInsert(
+          'INSERT INTO Data(name, value) VALUES(?)',
+          [
+            'reps_2'
+            10,
+          ],
+        );
+        await txn.rawInsert(
+          'INSERT INTO Data(name, value) VALUES(?)',
+          [
+            'sets_3'
+            2,
+          ],
+        );
+        await txn.rawInsert(
+          'INSERT INTO Data(name, value) VALUES(?)',
+          [
+            'reps_3'
+            10,
+          ],
+        );
+        await txn.rawInsert(
+          'INSERT INTO Data(name, value) VALUES(?)',
+          [
+            'sets_4'
+            2,
+          ],
+        );
+        await txn.rawInsert(
+          'INSERT INTO Data(name, value) VALUES(?)',
+          [
+            'reps_4'
+            10,
+          ],
+        );
+      }
+      newList = await txn.rawQuery('SELECT * FROM Data');
+      _reps = newList[0]['reps'];
+    });
+    return _reps;
+  }
+
+  int get getRepsData {
+    return _reps;
+  }
+
+  void incrementReps() async {
+    await database.transaction((txn) async {
+      _reps += 1;
+      await txn
+          .rawUpdate('UPDATE Data SET reps = ? WHERE id = ?', ['$_reps', '1']);
+    });
+  }
+
+  void decrementReps() async {
+    await database.transaction((txn) async {
+      _reps -= 1;
+      await txn
+          .rawUpdate('UPDATE Data SET reps = ? WHERE id = ?', ['$_reps', '1']);
+    });
+  }
+}
+
+class WorkoutData {
+  static final List<Workout> armWorkout = [
+    Workout(
+      name: 'Triceps Dips',
+      isTimed: false,
+      isHighlighted: true,
+    ),
+    Workout(
+      name: 'Spiderman Pushups',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Pushups',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Crab Walk',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Special Pushups',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Plank and Reach',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Burpees',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Arm Circle Clockwise',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Arm Circle Anticlockwise',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Triceps Dips',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Spiderman Pushups',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Pushups',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Crab Walk',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Special Pushups',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Plank and Reach',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Burpees',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Triceps Stretch Left',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Triceps Stretch Right',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Standing Bicep Stretch Left',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Standing Bicep Stretch Right',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+  ];
+
+  static final List<Workout> coreWorkout = [
+    Workout(
+      name: 'Standing Bicycle Crunches',
+      isTimed: false,
+      isHighlighted: true,
+    ),
+    Workout(
+      name: 'Mountain Climbers',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Russian Twists',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Situps',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Butt Bridges',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Crunches',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Plank',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Standing Bicycle Crunches',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Mountain Climbers',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Russian Twists',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Situps',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Butt Bridges',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Crunches',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Plank',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Side Plank Left',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Side Plank Right',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Cobra Stretch',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Lying Twist Stretch Left',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Lying Twist Stretch Right',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+  ];
+
+  static final List<Workout> chestWorkout = [
+    Workout(
+      name: 'Arm Circles',
+      isTimed: false,
+      isHighlighted: true,
+    ),
+    Workout(
+      name: 'Burpees',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Spiderman Pushups',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Pushups',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Widearm Pushups',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Diamond Pushups',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Staggered Pushups',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Burpees',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Shoulder Stretch',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Cobra Stretch',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Chest Stretch',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+  ];
+
+  static final List<Workout> backWorkout = [
+    Workout(
+      name: 'Shoulder Workout 1',
+      isTimed: false,
+      isHighlighted: true,
+    ),
+    Workout(
+      name: 'Workout 2',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Workout 3',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Workout 4',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Workout 5',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Workout 6',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Workout 7',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Workout 8',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Workout 9',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+  ];
+
+  static final List<Workout> legsWorkout = [
+    Workout(
+      name: 'Squats',
+      isTimed: false,
+      isHighlighted: true,
+    ),
+    Workout(
+      name: 'Fire Hydrant Left',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Fire Hydrant Right',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Lunges',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Side Leg Circles Left',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Side Leg Circles Right',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Curtsy Lunges Left',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Curtsy Lunges Right',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Sumo Squats',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Flutter Kicks',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Calf Raises',
+      isTimed: false,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Left Quad Stretch',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Right Quad Stretch',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Knee To Chest Left',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Knee To Chest Right',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Calf Stretch Left',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+    Workout(
+      name: 'Calf Stretch Right',
+      isTimed: true,
+      isHighlighted: false,
+    ),
+  ];
+}

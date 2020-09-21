@@ -1,0 +1,115 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_workout/provider/data.dart';
+import 'package:flutter_workout/provider/workout.dart';
+import 'package:provider/provider.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+
+import 'home_screen.dart';
+
+class WorkoutScreen extends StatefulWidget {
+  static const routeName = '/workout';
+
+  @override
+  _WorkoutScreenState createState() => _WorkoutScreenState();
+}
+
+class _WorkoutScreenState extends State<WorkoutScreen> {
+  int highlightedIndex = 0;
+  List<Workout> getWorkout(String name) {
+    if (name == 'Arm') {
+      return WorkoutData.armWorkout;
+    } else if (name == 'Chest') {
+      return WorkoutData.chestWorkout;
+    } else if (name == 'Back') {
+      return WorkoutData.backWorkout;
+    } else if (name == 'Core') {
+      return WorkoutData.coreWorkout;
+    } else if (name == 'Leg') {
+      return WorkoutData.legsWorkout;
+    }
+    return [];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+    final int reps = Provider.of<RepsData>(
+      context,
+      listen: false,
+    ).getRepsData;
+    List<Workout> workouts = getWorkout(args['name']);
+    ItemScrollController _scrollController = ItemScrollController();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          '${args["name"]} Workout • ${workouts.length} Exercises',
+        ),
+      ),
+      body: ScrollablePositionedList.builder(
+        itemScrollController: _scrollController,
+        itemBuilder: (context, index) => Card(
+          elevation: workouts[index].isHighlighted ? 7 : 1,
+          color: workouts[index].isHighlighted ? Colors.blue : Colors.white,
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              vertical: 20,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Flexible(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: 20,
+                    ),
+                    child: Text(
+                      workouts[index].name,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20,
+                  ),
+                  child: Text(
+                    workouts[index].isTimed ? '30s' : 'x$reps',
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+        itemCount: workouts.length,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(
+            () {
+              if (highlightedIndex == workouts.length - 1) {
+                Navigator.of(context).pushReplacementNamed(
+                  HomeScreen.routeName,
+                );
+              } else {
+                workouts[highlightedIndex].isHighlighted = false;
+                highlightedIndex = highlightedIndex + 1;
+                workouts[highlightedIndex].isHighlighted = true;
+                _scrollController.scrollTo(
+                  index: highlightedIndex,
+                  duration: Duration(
+                    milliseconds: 700,
+                  ),
+                );
+              }
+            },
+          );
+        },
+        child: Icon(
+          Icons.arrow_forward,
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+}
